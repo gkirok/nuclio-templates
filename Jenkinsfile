@@ -79,19 +79,16 @@ spec:
                     parallel(
                             'source archive': {
                                 container('jnlp') {
-                                    try {
-                                        echo "dva"
-                                        dir("${BUILD_FOLDER}") {
-                                            echo "raz"
-                                            zho = sh(
-                                                    script: "wget https://github.com/gkirok/nuclio-templates/archive/${TAG_VERSION}.zip",
-                                                    returnStdout: true
-                                            ).trim()
-                                            echo "$zho"
+                                        zho = sh(
+                                                script: "wget https://github.com/gkirok/nuclio-templates/archive/${TAG_VERSION}.zip",
+                                                returnStdout: true
+                                        ).trim()
+                                        echo "$zho"
+                                        withCredentials([
+                                                string(credentialsId: pipelinex.PackagesRepo.ARTIFACTORY_IGUAZIO[2], variable: 'PACKAGES_ARTIFACTORY_PASSWORD')
+                                        ]) {
+                                            common.upload_file_to_artifactory(pipelinex.PackagesRepo.ARTIFACTORY_IGUAZIO[0], pipelinex.PackagesRepo.ARTIFACTORY_IGUAZIO[1], PACKAGES_ARTIFACTORY_PASSWORD, "iguazio-devops/nuclio-templates", "${TAG_VERSION}.zip", BUILD_FOLDER)
                                         }
-                                    } catch (err) {
-                                        echo "Can not push code to development"
-                                    }
                                 }
                             }
                     )
