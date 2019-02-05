@@ -80,7 +80,11 @@ spec:
                             'source archive': {
                                 container('jnlp') {
                                     dir("${BUILD_FOLDER}") {
-                                        sh("wget https://github.com/gkirok/nuclio-templates/archive/${TAG_VERSION}.zip")
+                                        zho = sh(
+                                                script: "wget https://github.com/gkirok/nuclio-templates/archive/${TAG_VERSION}.zip",
+                                                returnStdout: true
+                                        ).trim()
+                                        echo zho
                                         withCredentials([
                                                 string(credentialsId: pipelinex.PackagesRepo.ARTIFACTORY_IGUAZIO[2], variable: 'PACKAGES_ARTIFACTORY_PASSWORD')
                                         ]) {
